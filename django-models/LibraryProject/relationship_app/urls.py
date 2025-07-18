@@ -18,5 +18,10 @@ urlpatterns = [
 ]
 
 
-path('librarian-role/', views.librarian_view, name='librarian_view'),
 
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('librarian-role/', views.librarian_view, name='librarian_view'),
+]

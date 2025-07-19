@@ -25,3 +25,13 @@ from . import views
 urlpatterns = [
     path('librarian-role/', views.librarian_view, name='librarian_view'),
 ]
+
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('books/add/', views.add_book, name='add-book'),
+    path('books/edit/<int:book_id>/', views.edit_book, name='edit-book'),
+    path('books/delete/<int:book_id>/', views.delete_book, name='delete-book'),
+]

@@ -164,7 +164,9 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True     
 
 # Additional security headers
-X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking
+X_FRAME_OPTIONS = 'DENY'  
 SECURE_CONTENT_TYPE_NOSNIFF = True  
 SECURE_BROWSER_XSS_FILTER = True    
 
+# Trust X-Forwarded-Proto header from proxy (for HTTPS detection)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

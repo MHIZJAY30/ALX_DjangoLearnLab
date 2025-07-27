@@ -23,7 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-sor&ezvf9ilpq-2wj9w2b1(d@isca&f7e+yq2z48%6$*m0f26e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+# Prevent XSS and content sniffing attacks
+SECURE_BROWSER_XSS_FILTER = True  
+X_FRAME_OPTIONS = 'DENY'          
+SECURE_CONTENT_TYPE_NOSNIFF = True  
+
 
 ALLOWED_HOSTS = []
 
@@ -40,6 +46,7 @@ INSTALLED_APPS = [
     'bookshelf.apps.BookshelfConfig',
     'relationship_app',
     'accounts'
+    'csp',
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -52,7 +59,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", 'https://trusted.cdn.com')
+CSP_STYLE_SRC = ("'self'", 'https://fonts.googleapis.com')
 
 # Authentication Redirects
 LOGIN_REDIRECT_URL = '/'
@@ -133,3 +145,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
+
+
+CSRF_COOKIE_SECURE = True     
+SESSION_COOKIE_SECURE = True   

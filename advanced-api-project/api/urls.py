@@ -22,3 +22,15 @@ from .views import BookListView
 urlpatterns = [
     path('books/', BookListView.as_view(), name='book-list'),
 ]
+
+
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import BookViewSet
+
+router = DefaultRouter()
+router.register(r'books', BookViewSet, basename='book')  # auto-generates book-list, book-detail
+
+urlpatterns = [
+    path('', include(router.urls)),
+]

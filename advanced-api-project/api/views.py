@@ -71,6 +71,7 @@ class BookDelete(generics.DestroyAPIView):
 
 
 from rest_framework import generics, filters
+from django_filters import rest_framework
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Book
 from .serializers import BookSerializer

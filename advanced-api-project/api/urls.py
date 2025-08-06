@@ -14,3 +14,11 @@ urlpatterns = [
     path('books/update/<int:pk>/', BookUpdate.as_view(), name='book-update'),
     path('books/delete/<int:pk>/', BookDelete.as_view(), name='book-delete'),
 ]
+
+
+from django.urls import path
+from .views import BookListView
+
+urlpatterns = [
+    path('books/', BookListView.as_view(), name='book-list'),
+]

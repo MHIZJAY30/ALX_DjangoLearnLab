@@ -15,10 +15,11 @@ urlpatterns = [
 
     path('profile/', views.profile, name='profile'),
 
-    path('posts/', PostListView.as_view(), name='post-list'),
-    path('posts/new/', PostCreateView.as_view(), name='post-create'),
-    path('posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
-    path('posts/<int:pk>/edit/', PostUpdateView.as_view(), name='post-edit'),
-    path('posts/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
+
+    path('', views.post_list, name='post_list'),
+    path('post/new/', views.post_create, name='post_create'),
+    path('post/<int:pk>/update/', views.post_update, name='post_update'),
+    path('post/<int:pk>/delete/', views.post_delete, name='post_delete'),
 ]
+
 

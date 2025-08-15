@@ -1,0 +1,28 @@
+{% extends "blog/base.html" %}
+{% block content %}
+  <h1>Posts</h1>
+  {% for post in posts %}
+    <article>
+      <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
+      <p>by {{ post.author.username }} | {{ post.published_date|date:"M d, Y" }}</p>
+      <p>{{ post.content|truncatewords:40 }}</p>
+      {% if user == post.author %}
+        <p>
+          <a href="{% url 'post-edit' post.pk %}">Edit</a> |
+          <a href="{% url 'post-delete' post.pk %}">Delete</a>
+        </p>
+      {% endif %}
+    </article>
+    <hr>
+  {% empty %}
+    <p>No posts yet.</p>
+  {% endfor %}
+
+  {% if is_paginated %}
+    <div>
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+      <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

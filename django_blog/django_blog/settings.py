@@ -50,6 +50,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+
+# MEDIA (for profile photo uploads)
+import os
+BASE_DIR = Path(__file__).resolve().parent.parent 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 ROOT_URLCONF = 'django_blog.urls'
 
 TEMPLATES = [

@@ -1,0 +1,32 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}Django Blog{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'blog/css/style.css' %}">
+</head>
+<body>
+  <header>
+    <h1><a href="/">Django Blog</a></h1>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <p>&copy; {{ now|default:"" }}</p>
+  </footer>
+</body>
+</html>
+
+
+{% extends "blog/base.html" %}
+
+{% block title %}Home - Django Blog{% endblock %}
+
+{% block content %}
+  <h2>Welcome to the Blog!</h2>
+  <p>Your setup is working </p>
+{% endblock %}
+
+

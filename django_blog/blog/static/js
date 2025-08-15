@@ -1,0 +1,6 @@
+
+  <script src="{% static 'blog/js/app.js' %}"></script>
+</body>
+</html>
+
+console.log("app.js loaded");

@@ -107,8 +107,8 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return post.author == self.request.user
 
 @login_required
-def comment_create(request, post_pk):
-    post = get_object_or_404(Post, pk=post_pk)
+def comment_create(request, pk):
+    post = get_object_or_404(Post, pk=pk)
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -116,6 +116,7 @@ def comment_create(request, post_pk):
             comment.post = post
             comment.author = request.user
             comment.save()
+            return redirect('post-detail', pk=post.pk)
             # Redirect to post detail and jump to comments section
             return redirect(reverse('post-detail', kwargs={'pk': post.pk}) + '#comments')
     # If GET or invalid form, redirect to post detail (you might instead re-render form with errors)
@@ -160,3 +161,4 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         comment = self.get_object()
         return self.request.user == comment.author
+

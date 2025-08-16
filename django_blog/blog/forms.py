@@ -4,6 +4,7 @@ from .models import Post, Tag
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile
+from taggit.forms import TagWidget
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -41,8 +42,9 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         # Include your existing editable fields + tags_input (not the m2m 'tags' directly)
-        fields = ['title', 'content']  # author and published_date handled automatically
+        fields = ['title', 'content', 'tags']  # author and published_date handled automatically
         widgets = {
+            'tags': TagWidget(),
             'content': forms.Textarea(attrs={'rows': 10}),
         }
 
@@ -88,5 +90,4 @@ class CommentForm(forms.ModelForm):
         if len(content) > 2000:
             raise forms.ValidationError("Comment cannot be longer than 2000 characters.")
         return content
-
 

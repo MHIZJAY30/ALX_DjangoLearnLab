@@ -16,10 +16,17 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
 
 
-    path('', views.post_list, name='post_list'),
+    path('', views.PostListView.as_view(), name='post_list'),
     path('post/new/', views.post_create, name='post_create'),
     path('post/<int:pk>/update/', views.post_update, name='post_update'),
     path('post/<int:pk>/delete/', views.post_delete, name='post_delete'),
-]
 
+     # existing post urls...
+    # Create comment on a post
+    path('posts/<int:post_pk>/comments/new/', views.comment_create, name='comment-create'),
+    # Edit a comment
+    path('comments/<int:pk>/edit/', views.CommentUpdateView.as_view(), name='comment-edit'),
+    # Delete a comment
+    path('comments/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
+]
 

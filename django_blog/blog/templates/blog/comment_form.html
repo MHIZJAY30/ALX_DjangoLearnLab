@@ -1,0 +1,13 @@
+<div class="comment-form">
+  {% if user.is_authenticated %}
+    <form action="{% url 'comment-create' post.pk %}" method="post">
+      {% csrf_token %}
+      {{ comment_form.as_p }}
+      <button type="submit">Post comment</button>
+    </form>
+  {% else %}
+    <p>
+      <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to leave a comment.
+    </p>
+  {% endif %}
+</div>

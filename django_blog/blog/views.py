@@ -7,6 +7,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import Post
 from .forms import PostForm
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from .models import Post, Comment
+from .forms import CommentForm
 
 
 # Create your views here.
@@ -61,7 +66,13 @@ class PostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
-    context_object_name = 'post'
+    context_object_name = 'post' # helpful so template uses "post"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+        # post.comments available due to related_name
+        return context
 
 # Create view (auth required)
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -94,3 +105,33 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return post.author == self.request.user
+
+@login_required
+def comment_create(request, post_pk):
+    post = get_object_or_404(Post, pk=post_pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            # Redirect to post detail and jump to comments section
+            return redirect(reverse('post-detail', kwargs={'pk': post.pk}) + '#comments')
+    # If GET or invalid form, redirect to post detail (you might instead re-render form with errors)
+    return redirect(reverse('post-detail', kwargs={'pk': post.pk}))
+
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_edit.html'  
+
+    def get_success_url(self):
+        # redirect back to the post detail
+        return reverse('post-detail', kwargs={'pk': self.object.post.pk}) + '#comments'
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+

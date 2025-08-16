@@ -28,4 +28,10 @@ urlpatterns = [
     path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),
     # Delete a comment
     path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
+
+     # View posts by a specific tag (string param)
+    path('tags/<str:tag_name>/', views.posts_by_tag, name='posts-by-tag'),
+
+    # Search endpoint that uses ?q=...
+    path('search/', views.search, name='search'),
 ]

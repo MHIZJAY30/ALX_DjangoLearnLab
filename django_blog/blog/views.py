@@ -5,13 +5,14 @@ from .forms import RegistrationForm, UserUpdateForm, ProfileUpdateForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from .models import Post
+from .models import Post, Tag
 from .forms import PostForm
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import Post, Comment
 from .forms import CommentForm
+from django.db.models import Q
 
 
 # Create your views here.
@@ -162,3 +163,24 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         comment = self.get_object()
         return self.request.user == comment.author
 
+def posts_by_tag(request, tag_name):
+    # Case-insensitive match
+    posts = Post.objects.filter(tags__name__iexact=tag_name).distinct().order_by('-id')
+    context = {
+        'tag_name': tag_name,
+        'posts': posts,
+    }
+    return render(request, 'blog/tag_posts.html', context)
+
+def search(request):
+    q = (request.GET.get('q') or '').strip()
+    posts = Post.objects.none()
+    if q:
+        # If your content field is 'content', include that; if it's 'body', include that.
+        posts = Post.objects.filter(
+            Q(title__icontains=q) |
+            Q(body__icontains=q) |      # change to Q(content__icontains=q) if your field is 'content'
+            Q(tags__name__icontains=q)
+        ).distinct().order_by('-id')
+    context = {'query': q, 'posts': posts}
+    return render(request, 'blog/search_results.html', context)

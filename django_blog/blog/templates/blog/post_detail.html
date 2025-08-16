@@ -14,3 +14,14 @@
 {% include "blog/_comment_list.html" %}
 <hr>
 {% include "blog/_comment_form.html" %}
+
+<p>
+  <strong>Tags:</strong>
+  {% if post.tags.all %}
+    {% for tag in post.tags.all %}
+      <a href="{% url 'posts-by-tag' tag.name %}" class="tag-pill">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  {% else %}
+    <em>No tags</em>
+  {% endif %}
+</p>

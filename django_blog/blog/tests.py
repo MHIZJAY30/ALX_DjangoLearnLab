@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from .models import Post
 from django.contrib.auth import get_user_model
-from .models import Post, Comment
+from .models import Post, Tag, Comment
 
 # Create your tests here.
 class PostCrudTests(TestCase):
@@ -61,3 +61,27 @@ class CommentTests(TestCase):
         # attempt edit page should be forbidden (UserPassesTestMixin returns 403)
         resp = self.client.get(reverse('comment-edit', kwargs={'pk': comment.pk}))
         self.assertIn(resp.status_code, (302, 403))  # depending on your login/redirect settings
+
+class TagSearchTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('u', 'u@example.com', 'pass')
+        self.post1 = Post.objects.create(title='Django Tips', body='Learn forms', author=self.user)
+        self.post2 = Post.objects.create(title='Python Tricks', body='Useful tips', author=self.user)
+        django_tag = Tag.objects.create(name='django')
+        tips_tag = Tag.objects.create(name='tips')
+        self.post1.tags.add(django_tag, tips_tag)
+        self.post2.tags.add(tips_tag)
+
+    def test_view_by_tag(self):
+        resp = self.client.get(reverse('posts-by-tag', args=['django']))
+        self.assertContains(resp, 'Django Tips')
+        self.assertNotContains(resp, 'Python Tricks')
+
+    def test_search_by_title_body_tag(self):
+        # search by word in title
+        resp = self.client.get(reverse('search'), {'q': 'Django'})
+        self.assertContains(resp, 'Django Tips')
+        # search by tag name
+        resp = self.client.get(reverse('search'), {'q': 'tips'})
+        self.assertContains(resp, 'Django Tips')
+        self.assertContains(resp, 'Python Tricks')

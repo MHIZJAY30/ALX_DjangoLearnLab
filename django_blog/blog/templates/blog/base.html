@@ -1,0 +1,4 @@
+<form action="{% url 'search' %}" method="get" style="display:flex; gap:.5rem;">
+  <input type="text" name="q" placeholder="Search posts..." value="{{ request.GET.q|default_if_none:'' }}">
+  <button type="submit">Search</button>
+</form>

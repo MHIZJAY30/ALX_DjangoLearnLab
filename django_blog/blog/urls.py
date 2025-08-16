@@ -21,13 +21,15 @@ urlpatterns = [
     path('post/<int:pk>/update/', views.post_update, name='post_update'),
     path('post/<int:pk>/delete/', views.post_delete, name='post_delete'),
 
-     # existing post urls...
     # Create comment on a post
     path('post/<int:pk>/comments/new/', views.comment_create, name='comment-create'),
     # Edit a comment
     path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),
     # Delete a comment
     path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
+
+    # tags
+    path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='posts_by_tag'),
 
      # View posts by a specific tag (string param)
     path('tags/<str:tag_name>/', views.posts_by_tag, name='posts-by-tag'),

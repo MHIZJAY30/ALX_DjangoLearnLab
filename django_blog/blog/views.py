@@ -13,6 +13,7 @@ from django.urls import reverse
 from .models import Post, Comment
 from .forms import CommentForm
 from django.db.models import Q
+from taggit.models import Tag
 
 
 # Create your views here.
@@ -184,3 +185,18 @@ def search(request):
         ).distinct().order_by('-id')
     context = {'query': q, 'posts': posts}
     return render(request, 'blog/search_results.html', context)
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get('tag_slug')
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        return Post.objects.filter(tags__in=[tag])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag'] = self.kwargs.get('tag_slug')
+        return context

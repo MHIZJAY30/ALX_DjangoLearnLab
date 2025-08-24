@@ -80,3 +80,8 @@ class BookAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         years = [book['publication_year'] for book in response.data]
         self.assertEqual(years, sorted(years))
+
+#  This test ensures a book can be created successfully
+#  This test checks filtering works with 'title' param
+#  This test checks searching works with 'search' param
+#  This test checks ordering by publication_year

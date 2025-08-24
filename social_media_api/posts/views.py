@@ -1,12 +1,13 @@
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
-from .permissions import IsOwnerOrReadOnl
+from .permissions import IsOwnerOrReadOnly
+
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
@@ -36,3 +37,15 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class FeedListView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = None  
+
+    def get_queryset(self):
+        user = self.request.user
+        # If you used custom User.following:
+        following_qs = user.following.all()
+        return Post.objects.filter(author__in=following_qs).order_by('-created_at')

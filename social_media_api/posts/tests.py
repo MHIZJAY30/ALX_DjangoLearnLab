@@ -1,8 +1,9 @@
 from django.test import TestCase
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from posts.models import Post
+from posts.models import Post, Like
+from notifications.models import Notification
 
 # Create your tests here.
 User = get_user_model()
@@ -29,3 +30,26 @@ class FollowFeedTests(APITestCase):
         titles = [item['title'] for item in data]
         self.assertIn('Post B', titles)
         self.assertNotIn('Post C', titles)
+
+
+class LikeNotificationTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.u1 = User.objects.create_user(username='u1', password='pass')
+        self.u2 = User.objects.create_user(username='u2', password='pass')
+        self.post = Post.objects.create(title='T', body='B', author=self.u2)
+        self.client.login(username='u1', password='pass')
+
+    def test_like_creates_notification(self):
+        url = reverse('post-like', args=[self.post.pk])
+        resp = self.client.post(url)
+        self.assertEqual(resp.status_code, 201)
+        self.assertTrue(Like.objects.filter(post=self.post, user=self.u1).exists())
+        notifs = Notification.objects.filter(recipient=self.u2, actor=self.u1, verb__icontains='liked')
+        self.assertTrue(notifs.exists())
+
+    def test_unlike_removes_like(self):
+        self.client.post(reverse('post-like', args=[self.post.pk]))
+        resp = self.client.post(reverse('post-unlike', args=[self.post.pk]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertFalse(Like.objects.filter(post=self.post, user=self.u1).exists())

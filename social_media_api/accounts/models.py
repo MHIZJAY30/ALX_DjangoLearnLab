@@ -1,9 +1,10 @@
+from django.contrib.auth.models import AbstractUser, User
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from accounts.models import CustomUser
 
 # Create your models here.
-class User(AbstractUser):
-    bio = models.TextField(blank=True)
+class CustomUser(AbstractUser):
+    bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
     followers = models.ManyToManyField(
         'self',
@@ -30,4 +31,5 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
 

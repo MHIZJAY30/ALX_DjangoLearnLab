@@ -92,3 +92,20 @@ Notes:
 - Only authenticated users can modify follow relationships.
 - You cannot follow yourself (API returns 400).
 - Changing the `following` field is done only by the authenticated user (server uses request.user.following.add/remove).
+
+
+Notifications & Likes API
+Models:
+- posts.Like: post FK, user FK, unique_together (post,user)
+- notifications.Notification: recipient, actor, verb, generic target, read, timestamp
+
+APIs:
+- POST /api/posts/<post_id>/like/    - like post (auth required)
+- POST /api/posts/<post_id>/unlike/  - unlike post (auth required)
+- GET  /api/notifications/           - list notifications for current user (auth required)
+- POST /api/notifications/<id>/mark-read/ - mark a notification read
+
+Notes:
+- A notification is automatically created when someone likes your post, and when someone follows you (if you add that in follow view).
+- Notification target uses GenericForeignKey so it can point to a Post, Comment, or other object.
+- Future: consider WebSockets / Django Channels for real-time notifications.
